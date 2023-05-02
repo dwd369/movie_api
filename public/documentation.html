@@ -1,21 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
-<meta charset="UTF-8">
-<title>Page Title</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+    <head>
+        <meta charset="UTF-8">
+        <title>Movies API Documentation</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    </head>
+
 <body>
     <h1>Features</h1>
-    <ul>
-        <li>Return a list of ALL movies to the user</li>
-        <li>Return data (description, genre, director, image URL, whether it's featured or not) about a single movie by title to the user</li>
-        <li>Return data about a genre (description) by name/title (e.g., "Thriller")</li>
-        <li>Return data about a director (bio, birth year, death year) by name</li>
-        <li>Allow new users to register</li>
-        <li>Allow users to update their user info (username, password, email, date of birth)</li>
-        <li>Allow users to add a movie to their list of favorites</li>
-        <li>Allow users to remove a movies from their list of favorites</li>
-        <li>Allow existing users to deregister</li>
-    </ul>
+    <hr/>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">REQUEST</th>
+                <th scope="col">URL</th>
+                <th scope="col">HTTP METHOD</th>
+                <th scope="col">QUERY PARAMETER</th>
+                <th scope="col">REQUEST DATA FORMAT</th>
+                <th scope="col">RESPONSE DATA BODY FORMAT</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td scope="row">Get a list of all movies</td>
+                <td>/movies</td>
+                <td>GET</td>
+                <td></td>
+                <td>None</td>
+                <td>A JSON object holding data about all the movies</td>
+            </tr>
+            <tr>
+                <td scope="row">Get data (description, genre, director, image URL) about a single movie by title to the user</td>
+                <td>/movies/:title</td>
+                <td>GET</td>
+                <td>:title</td>
+                <td>None</td>
+                <td>A JSON object hold data about the specified movie</td>
+            </tr>
 
+            <tr>
+                <td scope="row">Get data about a genre (description) by name/title</td>
+                <td>/movies/genre/:genreName</td>
+                <td>GET</td>
+                <td>:genreName</td>
+                <td>None</td>
+                <td>A JSON object holding data about movies that are in a specific genre.</td>
+            </tr>
+            <tr>
+                <td scope="row">Get data about a director (bio, birth, year, death year) by name</td>
+                <td>/movies/directors/:directorName</td>
+                <td>GET</td>
+                <td>:directorName</td>
+                <td>None</td>
+                <td>A JSON object holding data about the specified director.</td>
+            </tr>
+            <tr>
+                <td scope="row">Add new user</td>
+                <td>/users</td>
+                <td>POST</td>
+                <td></td>
+                <td>A JSON object holding data about the new user to add.</td>
+                <td>A success message to user on success/error of registration status</td>
+            </tr>
+            <tr>
+                <td scope="row">Update user info based on ID</td>
+                <td>/account/:id</td>
+                <td>PUT</td>
+                <td>:id</td>
+                <td>A JSON object holding data about the updated info for the specified username</td>
+                <td>A success message to user on success/error of update status</td>
+            </tr>
+            <tr>
+                <td scope="row">Add a new movie to a user's favorite movie list</td>
+                <td>/account/:id/:movieTitle</td>
+                <td>POST</td>
+                <td>:id, :movieTitle</td>
+                <td>A JSON object holding data for a movie</td>
+                <td>A success message to user on success/error of adding a movie to favorite</td>
+            </tr>
+            <tr>
+                <td scope="row">Remove a movie from a user's favorite movie list</td>
+                <td>/users/:id/:movieTitle</td>
+                <td>DELETE</td>
+                <td>:id, :movieTitle</td>
+                <td>None</td>
+                <td>A success message to user on success/error of removing a favorite movie</td>
+            </tr>
+            <tr>
+                <td scope="row">Delete a user based on specified user id</td>
+                <td>/users/:id</td>
+                <td>DELETE</td>
+                <td>:id</td>
+                <td>None</td>
+                <td>A success message to user on success/error of deregistering the user</td>
+            </tr>
+        </tbody>
+    </table>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 </body>
 </html>
