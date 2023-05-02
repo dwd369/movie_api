@@ -266,6 +266,11 @@ app.get('/movies', (req, res) => {
     res.status(200).json(movies);
 });
 
+// GET request to pull API documentation
+app.get('/documentation', (req, res) => {
+    res.sendFile('public/documentation.html', { root: __dirname });
+});
+
 // GET request to pull a specific movie based on the provided title
 app.get('/movies/:title', (req, res) => {
     const { title } = req.params;
