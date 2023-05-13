@@ -28,7 +28,27 @@
                 <td>GET</td>
                 <td></td>
                 <td>None</td>
-                <td>A JSON object holding data about all the movies</td>
+                <td>A JSON object holding data about all the movies with each movies in the following format:<br>
+                    {<br>
+                        _id: ObjectId("6455ce36b7428c12f84edef9"),<br>
+                        Title: "Movie Name",<br>
+                        Description: "Movie Description",<br>
+                        Genre: {<br>
+                            Name: "Genre Name",<br>
+                            Description: "Genre description"<br>
+                        },<br>
+                        Director: {<br>
+                            Name: "Director Name",<br>
+                            Bio: "Director Bio",<br>
+                            BirthYear: 1970,<br>
+                            DeathYear: "2017"<br>
+                        },<br>
+                        ImageURL: "http://test.com/movie.jpg",<br>
+                        Featured: false,<br>
+                        Actors: ['Actor Name'],<br>
+                        ReleaseYear: 1999<br>
+                    }<br>
+                </td>
             </tr>
             <tr>
                 <td scope="row">Get data (description, genre, director, image URL) about a single movie by title to the user</td>
@@ -36,7 +56,27 @@
                 <td>GET</td>
                 <td>:title</td>
                 <td>None</td>
-                <td>A JSON object hold data about the specified movie</td>
+                <td>A JSON object hold data about the specified movie<br>
+                    {<br>
+                        _id: ObjectId("6455ce36b7428c12f84edef9"),<br>
+                        Title: "Movie Name",<br>
+                        Description: "Movie Description",<br>
+                        Genre: {<br>
+                            Name: "Genre Name",<br>
+                            Description: "Genre description"<br>
+                        },<br>
+                        Director: {<br>
+                            Name: "Director Name",<br>
+                            Bio: "Director Bio",<br>
+                            BirthYear: 1970,<br>
+                            DeathYear: "2017"<br>
+                        },<br>
+                        ImageURL: "http://test.com/movie.jpg",<br>
+                        Featured: false,<br>
+                        Actors: ['Actor Name'],<br>
+                        ReleaseYear: 1999<br>
+                    }
+                </td>
             </tr>
 
             <tr>
@@ -45,7 +85,27 @@
                 <td>GET</td>
                 <td>:genreName</td>
                 <td>None</td>
-                <td>A JSON object holding data about movies that are in a specific genre.</td>
+                <td>A JSON object holding data about movies that are in a specific genre.<br>
+                    {<br>
+                        _id: ObjectId("6455ce36b7428c12f84edef9"),<br>
+                        Title: "Movie Name",<br>
+                        Description: "Movie Description",<br>
+                        Genre: {<br>
+                            Name: "Genre Name",<br>
+                            Description: "Genre description"<br>
+                        },<br>
+                        Director: {<br>
+                            Name: "Director Name",<br>
+                            Bio: "Director Bio",<br>
+                            BirthYear: 1970,<br>
+                            DeathYear: "2017"<br>
+                        },<br>
+                        ImageURL: "http://test.com/movie.jpg",<br>
+                        Featured: false,<br>
+                        Actors: ['Actor Name'],<br>
+                        ReleaseYear: 1999<br>
+                    }
+                </td>
             </tr>
             <tr>
                 <td scope="row">Get data about a director (bio, birth, year, death year) by name</td>
@@ -53,43 +113,88 @@
                 <td>GET</td>
                 <td>:directorName</td>
                 <td>None</td>
-                <td>A JSON object holding data about the specified director.</td>
+                <td>A JSON object holding data about the specified director.<br>
+                    {<br>
+                        Director: {<br>
+                            Name: "Director Name",<br>
+                            Bio: "Director Bio",<br>
+                            BirthYear: 1970,<br>
+                            DeathYear: "2017"<br>
+                        }<br>
+                    }<br>
+                </td>
             </tr>
             <tr>
                 <td scope="row">Add new user</td>
                 <td>/users</td>
                 <td>POST</td>
                 <td></td>
-                <td>A JSON object holding data about the new user to add.</td>
-                <td>A success message to user on success/error of registration status</td>
+                <td>A JSON object holding data about the new user to add in the following format:<br>
+                    {<br>
+                        Username: "testuser123",<br>
+                        Password: "123456",<br>
+                        Email: "testuser@test.com",<br>
+                        FavoriteMovies: [ObjectId(MovieObjectId)]<br>
+                    }<br>
+                </td>
+                <td>If success, a json file containing the user data will be return in the following format. If error, an error message will be sent back.<br>
+                    {<br>
+                        Username: "testuser123",<br>
+                        Password: "123456",<br>
+                        Email: "testuser@test.com",<br>
+                        FavoriteMovies: [ObjectId(MovieObjectId)]<br>
+                    }<br>
+                </td>
             </tr>
             <tr>
-                <td scope="row">Update user info based on ID</td>
-                <td>/account/:id</td>
+                <td scope="row">Update user info based on username</td>
+                <td>/users/:Username</td>
                 <td>PUT</td>
-                <td>:id</td>
-                <td>A JSON object holding data about the updated info for the specified username</td>
+                <td>:Username</td>
+                <td>A JSON object holding data about the updated info for a specified username, the request body should be in the following format:<br>
+                    {<br>
+                        Username: "testuser123",<br>
+                        Password: "123456",<br>
+                        Email: "testuser@test.com",<br>
+                        FavoriteMovies: [ObjectId(MovieObjectId)]<br>
+                    }<br>
+                </td>
                 <td>A success message to user on success/error of update status</td>
             </tr>
             <tr>
                 <td scope="row">Add a new movie to a user's favorite movie list</td>
-                <td>/account/:id/:movieTitle</td>
+                <td>/users/:Username/:MovieID</td>
                 <td>POST</td>
-                <td>:id, :movieTitle</td>
-                <td>A JSON object holding data for a movie</td>
-                <td>A success message to user on success/error of adding a movie to favorite</td>
+                <td>:Username, :MovieID</td>
+                <td>None</td>
+                <td>If success, a json file containing the user data will be return in the following format. If error, an error message will be sent back.<br>
+                    {<br>
+                        Username: "testuser123",<br>
+                        Password: "123456",<br>
+                        Email: "testuser@test.com",<br>
+                        FavoriteMovies: [ObjectId(MovieObjectId)]<br>
+                    }<br>
+                </td>
             </tr>
             <tr>
                 <td scope="row">Remove a movie from a user's favorite movie list</td>
-                <td>/users/:id/:movieTitle</td>
+                <td>/users/:Username/:movieID</td>
                 <td>DELETE</td>
-                <td>:id, :movieTitle</td>
+                <td>:Username, :movieID</td>
                 <td>None</td>
-                <td>A success message to user on success/error of removing a favorite movie</td>
+                <td>
+                    If success, a json file containing the user data will be return in the following format. If error, an error message will be sent back.<br>
+                    {<br>
+                        Username: "testuser123",<br>
+                        Password: "123456",<br>
+                        Email: "testuser@test.com",<br>
+                        FavoriteMovies: [ObjectId(MovieObjectId)]<br>
+                    }<br>
+                </td>
             </tr>
             <tr>
                 <td scope="row">Delete a user based on specified user id</td>
-                <td>/users/:id</td>
+                <td>/users/:Username</td>
                 <td>DELETE</td>
                 <td>:id</td>
                 <td>None</td>
