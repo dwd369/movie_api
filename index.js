@@ -19,6 +19,11 @@ mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, us
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// import auth.js
+let auth = require('./auth')(app);
+const passport = require('passport');
+
+require('./passport.js')
 
 // CREATE REQUESTS //
 // POST request to add new registered user
@@ -48,7 +53,7 @@ app.post('/users', (req,res) => {
 });
 
 // POST request to add a movie to a user's favorite movie
-app.post('/users/:id/:movieTitle', (req, res) => {
+app.post('/users/:id/:movieTitle', passport.authenticate('jwt', { session: false}), (req, res) => {
 
     const { id, movieTitle } = req.params;
 
@@ -65,7 +70,7 @@ app.post('/users/:id/:movieTitle', (req, res) => {
 
 
 // PUT request to update user information by username
-app.put('/users/:Username', (req, res) => {
+app.put('/users/:Username', passport.authenticate('jwt', { session: false}), (req, res) => {
 
     let user = req.body;
 
@@ -88,7 +93,7 @@ app.put('/users/:Username', (req, res) => {
 
 
 // PUT request to add favorite movies to a user based on username
-app.post('/users/:Username/movies/:MovieID', (req, res) => {
+app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false}), (req, res) => {
     Users.findOneAndUpdate({ Username: req.params.Username }, {
        $push: { FavoriteMovies: req.params.MovieID }
      },
@@ -103,7 +108,7 @@ app.post('/users/:Username/movies/:MovieID', (req, res) => {
 
 // DELETE REQUESTS //
 // DELETE request to remove a movie from a user's favorite movies
-app.delete('/users/:Username/:movieID', (req, res) => {
+app.delete('/users/:Username/:movieID', passport.authenticate('jwt', { session: false}), (req, res) => {
     
     Users.find(
         {Username: req.params.Username}
@@ -128,7 +133,7 @@ app.delete('/users/:Username/:movieID', (req, res) => {
 
 
 // DELETE request to remove a user by username
-app.delete('/users/:Username', (req, res) => {
+app.delete('/users/:Username', passport.authenticate('jwt', { session: false}), (req, res) => {
     const username = req.params.Username;
 
     Users.findOneAndDelete(
@@ -148,7 +153,7 @@ app.delete('/users/:Username', (req, res) => {
 
 // READ REQUESTS //
 // GET request to pull the list of movies
-app.get('/movies', (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false}), (req, res) => {
     
     Movies.find().then(movies => {
         return res.status(200).json(movies);
@@ -160,12 +165,12 @@ app.get('/movies', (req, res) => {
 });
 
 // GET request to pull API documentation
-app.get('/documentation', (req, res) => {
+app.get('/documentation', passport.authenticate('jwt', { session: false}), (req, res) => {
     res.sendFile('public/documentation.html', { root: __dirname });
 });
 
 // GET request to pull a specific movie based on the provided title
-app.get('/movies/:title', (req, res) => {
+app.get('/movies/:title', passport.authenticate('jwt', { session: false}), (req, res) => {
     const { title } = req.params;
 
     Movies.findOne({Title: title}).then(movie => {
@@ -182,7 +187,7 @@ app.get('/movies/:title', (req, res) => {
 });
 
 // GET request to pull data on a specific genre
-app.get('/movies/genre/:genreName', (req, res) => {
+app.get('/movies/genre/:genreName', passport.authenticate('jwt', { session: false}), (req, res) => {
     
     const { genreName } = req.params;
 
@@ -201,7 +206,7 @@ app.get('/movies/genre/:genreName', (req, res) => {
 
 
 // GET request to pull data on a specific director
-app.get('/movies/directors/:directorName', (req, res) => {
+app.get('/movies/directors/:directorName', passport.authenticate('jwt', { session: false}), (req, res) => {
     
     const { directorName } = req.params;
     console.log(directorName)
@@ -218,30 +223,6 @@ app.get('/movies/directors/:directorName', (req, res) => {
     })
 
 });
-
-// // LESSON EXAMPLE
-// // GET all users
-// app.get('/users', (req, res) => {
-//     Users.find().then(users => {
-//         return res.json(users);
-//     }).catch(error => {
-//         console.error(error);
-//         return res.status(500).send('Error: ' + error)
-//     })
-// });
-
-// // LESSON EXAMPLE
-// // GET user by username
-// app.get('/users/:Username', (req, res) => {
-//     const { username } = req.params;
-
-//     Users.findOne({Username: username}).then(user => {
-//         return res.status(200).json(user);
-//     }).catch(error => {
-//         console.error(error);
-//         res.status(500).send('Error: ' + error);    
-//     })
-// });
 
 // list for port 8080
 app.listen(8080, () => console.log("listening on 8080"));
