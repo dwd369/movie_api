@@ -49,10 +49,10 @@ require('./passport.js')
 app.post('/users', 
     // validation logic
     [
-        check(Username,'username is required').isLength({min: 5}), // validate username is not empty and has a minimum of 5 characters
-        check(Username, 'Username contain non alphanumberic characters - not allowed').isAlphanumeric(), // validate username is alphanumeric
-        check(Password, 'Password is required').not().isEmpty(), // validate password is not empty
-        check(Email, 'Email does not appear to be valid').isEmail() // validate email is in email format
+        check('Username','username is required').isLength({min: 5}), // validate username is not empty and has a minimum of 5 characters
+        check('Username', 'Username contain non alphanumberic characters - not allowed').isAlphanumeric(), // validate username is alphanumeric
+        check('Password', 'Password is required').not().isEmpty(), // validate password is not empty
+        check('Email', 'Email does not appear to be valid').isEmail() // validate email is in email format
     ],
     (req,res) => {
 
