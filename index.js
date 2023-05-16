@@ -6,8 +6,9 @@ const express = require('express'),
     uuid = require('uuid'),
     Models = require('./model.js'),
     cors = require('cors'),
-    {check, validationResult} = require('express-validator'),
     app = express();
+
+const {check, validationResult} = require('express-validator');
 
 
 // initialize models
