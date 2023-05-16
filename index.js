@@ -4,7 +4,9 @@ const express = require('express'),
     bodyParser = require('body-parser'),
     mongoose = require('mongoose'),
     uuid = require('uuid'),
-    Models = require('./model.js')
+    Models = require('./model.js'),
+    cors = require('cors'),
+    {check, validationResult} = require('express-validator'),
     app = express();
 
 
@@ -12,12 +14,29 @@ const express = require('express'),
 const Movies = Models.Movie;
 const Users = Models.User;
 
+let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
+
 // connect to mongodb database
 mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true});
 
 // use modules
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(cors());
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            // If a specific origin isn't found on the lsit of allowed origins
+            let message = "The CORS policy for this application doesn't allow access from origin " + origin;
+            return callback(new Error(message), false);
+        }
+        return callback(null, true);
+    }
+}));
+
+
+
 
 // import auth.js
 let auth = require('./auth')(app);
@@ -27,29 +46,47 @@ require('./passport.js')
 
 // CREATE REQUESTS //
 // POST request to add new registered user
-app.post('/users', (req,res) => {
+app.post('/users', 
+    // validation logic
+    [
+        check(Username,'username is required').isLength({min: 5}), // validate username is not empty and has a minimum of 5 characters
+        check(Username, 'Username contain non alphanumberic characters - not allowed').isAlphanumeric(), // validate username is alphanumeric
+        check(Password, 'Password is required').not().isEmpty(), // validate password is not empty
+        check(Email, 'Email does not appear to be valid').isEmail() // validate email is in email format
+    ],
+    (req,res) => {
 
-    Users.findOne({ Username: req.body.Username }).then(user => 
-    {
-        if (user) {
-            return res.status(400).send(req.body.Username + 'already exists');
-        } else {
-            Users.create({
-                Username: req.body.Username,
-                Password: req.body.Password,
-                Email: req.body.Email,
-                Birthday: req.body.Birthday
-            }).then(user => {
-                return res.status(201).json(user);
-            }).catch(error => {
-                console.error(error);
-                res.status(500).send('Error: ' + error);
-            })
+        // check for validation result
+        let errors = validationResult(req);
+        if (!errors.isEmpty) {
+            return res.status(422).json({error: errors.array()});
         }
-    }).catch(error => {
-        console.error(error);
-        res.status(500).send('Error: ' + error);
-    });
+
+        // hash user password
+        let hashedPassword = Users.hashedPassword(req.body.Password);
+
+        // duplicated username check
+        Users.findOne({ Username: req.body.Username }).then(user => 
+        {
+            if (user) {
+                return res.status(400).send(req.body.Username + 'already exists');
+            } else {
+                Users.create({
+                    Username: req.body.Username,
+                    Password: hashedPassword,
+                    Email: req.body.Email,
+                    Birthday: req.body.Birthday
+                }).then(user => {
+                    return res.status(201).json(user);
+                }).catch(error => {
+                    console.error(error);
+                    res.status(500).send('Error: ' + error);
+                })
+            }
+        }).catch(error => {
+            console.error(error);
+            res.status(500).send('Error: ' + error);
+        });
 });
 
 // POST request to add a movie to a user's favorite movie
@@ -225,4 +262,7 @@ app.get('/movies/directors/:directorName', passport.authenticate('jwt', { sessio
 });
 
 // list for port 8080
-app.listen(8080, () => console.log("listening on 8080"));
+const port = process.env.PORT || 8080;
+app.listen(port, '0.0.0.0', () => {
+    console.log('Listening to port ' + port);
+});
