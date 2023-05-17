@@ -15,36 +15,44 @@ const {check, validationResult} = require('express-validator');
 const Movies = Models.Movie;
 const Users = Models.User;
 
-let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
+// define allowed origins/domains
+//let allowedOrigins = ['http://localhost:8080', 'https://dd-myflix.herokuapp.com/'];
 
 // connect to mongodb database
 // mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true});
-// mongoose.connect('mongodb+srv://myFlixDBadmin:Oranges12073078@myflixdb.xuevxuy.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true});
 
 
 // use modules
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(cors());
-app.use(cors({
-    origin: (origin, callback) => {
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) === -1) {
-            // If a specific origin isn't found on the lsit of allowed origins
-            let message = "The CORS policy for this application doesn't allow access from origin " + origin;
-            return callback(new Error(message), false);
-        }
-        return callback(null, true);
-    }
-}));
+
+/*********************** CORS POLICY ***********************/
+// include CORS with express
+// app.use(cors({
+//     origin: (origin, callback) => {
+//         if (!origin) return callback(null, true);
+//         if (allowedOrigins.indexOf(origin) === -1) {
+
+//             // If a specific origin isn't found on the lsit of allowed origins
+//             let message = "The CORS policy for this application doesn't allow access from origin " + origin;
+//             return callback(new Error(message), false);
+
+//         }
+//         return callback(null, true);
+//     }
+// }));
+
+
+// include CORS to allow access from all domains
+app.use(cors());
 
 
 // import auth.js
 let auth = require('./auth')(app);
 const passport = require('passport');
 
-require('./passport.js')
+require('./passport.js');
 
 // CREATE REQUESTS //
 // POST request to add new registered user
@@ -53,15 +61,18 @@ app.post('/users',
     [
         check('Username','username is required').isLength({min: 5}), // validate username is not empty and has a minimum of 5 characters
         check('Username', 'Username contain non alphanumberic characters - not allowed').isAlphanumeric(), // validate username is alphanumeric
-        check('Password', 'Password is required').not().isEmpty(), // validate password is not empty
-        check('Email', 'Email does not appear to be valid').isEmail() // validate email is in email format
+        check('Password', 'Password is required').notEmpty(), // validate password is not empty
+        check('Email', 'Email does not appear to be valid').isEmail(), // validate email is in email format
+        check('Birthday', 'Birthday must be in format of YYYY-MM-DD').isDate().optional({nullable: true}) // if date is present, check if it is a date in the format of YYYY-MM-DD
     ],
     (req,res) => {
 
         // check for validation result
         let errors = validationResult(req);
-        if (!errors.isEmpty) {
-            return res.status(422).json({error: errors.array()});
+        
+
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.array()});
         }
 
         // hash user password
@@ -109,7 +120,24 @@ app.post('/users/:id/:movieTitle', passport.authenticate('jwt', { session: false
 
 
 // PUT request to update user information by username
-app.put('/users/:Username', passport.authenticate('jwt', { session: false}), (req, res) => {
+
+app.put('/users/:Username', 
+    [
+        check('Username','username is required').isLength({min: 5}), // validate username is not empty and has a minimum of 5 characters
+        check('Username', 'Username contain non alphanumberic characters - not allowed').isAlphanumeric(), // validate username is alphanumeric
+        check('Password', 'Password is required').not().isEmpty(), // validate password is not empty
+        check('Email', 'Email does not appear to be valid').isEmail(), // validate email is in email format
+        check('Birthday', 'Birthday must be in format of YYYY-MM-DD').isDate().optional({nullable: true}) // if date is present, check if it is a date in the format of YYYY-MM-DD
+    ], 
+    passport.authenticate('jwt', { session: false}), 
+    (req, res) => {
+
+    // check for errors
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
 
     let user = req.body;
 
@@ -202,6 +230,7 @@ app.get('/', (req, res) => {
 app.get('/movies', passport.authenticate('jwt', { session: false}), (req, res) => {
     
     Movies.find().then(movies => {
+        console.log(movies);
         return res.status(200).json(movies);
     }).catch(error => {
         console.error(error);
