@@ -20,8 +20,8 @@ const Directors = Models.Director;
 //let allowedOrigins = ['http://localhost:8080', 'https://dd-myflix.herokuapp.com/'];
 
 // connect to mongodb database
-mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true});
-// mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true});
+// mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true});
 
 
 // use modules
