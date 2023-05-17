@@ -65,7 +65,7 @@ app.post('/users',
         }
 
         // hash user password
-        let hashedPassword = Users.hashedPassword(req.body.Password);
+        let hashedPassword = Users.hashPassword(req.body.Password);
 
         // duplicated username check
         Users.findOne({ Username: req.body.Username }).then(user => 
