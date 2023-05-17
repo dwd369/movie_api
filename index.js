@@ -18,7 +18,7 @@ const Users = Models.User;
 let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
 
 // connect to mongodb database
-// mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true});
 
 // use modules
 app.use(bodyParser.json());
@@ -190,6 +190,13 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false}), 
 
 
 // READ REQUESTS //
+// GET request for landing page
+app.get('/', (req, res) => {
+    return res.status(200).send('Welcome to the myFlix API');
+})
+
+
+
 // GET request to pull the list of movies
 app.get('/movies', passport.authenticate('jwt', { session: false}), (req, res) => {
     
