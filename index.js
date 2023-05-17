@@ -14,13 +14,14 @@ const {check, validationResult} = require('express-validator');
 // initialize models
 const Movies = Models.Movie;
 const Users = Models.User;
+const Directors = Models.Director;
 
 // define allowed origins/domains
 //let allowedOrigins = ['http://localhost:8080', 'https://dd-myflix.herokuapp.com/'];
 
 // connect to mongodb database
-// mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true});
-mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true});
+// mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true});
 
 
 // use modules
@@ -42,7 +43,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //         return callback(null, true);
 //     }
 // }));
-
 
 // include CORS to allow access from all domains
 app.use(cors());
@@ -140,11 +140,13 @@ app.put('/users/:Username',
     }
 
     let user = req.body;
+    let hashedPassword = Users.hashPassword(req.body.Password);
+
 
     Users.findOneAndUpdate({Username: user.Username}, {$set: 
         {
             Username: user.Username,
-            Password: user.Password,
+            Password: hashedPassword,
             Email: user.Email,
             Birthday: user.Birthday,
             FavoriteMovies: user.FavoriteMovies
@@ -281,21 +283,32 @@ app.get('/movies/genre/:genreName', passport.authenticate('jwt', { session: fals
 
 
 // GET request to pull data on a specific director
-app.get('/movies/directors/:directorName', passport.authenticate('jwt', { session: false}), (req, res) => {
+app.get('/movies/directors/:name', passport.authenticate('jwt', { session: false}), (req, res) => {
     
-    const { directorName } = req.params;
-    console.log(directorName)
+    const { name } = req.params;
+    console.log(name);
 
-    Movies.findOne({"Director.Name": directorName}).then(movie => {
-        if (!movie) {
+    Directors.findOne({Name: name}).then(director => {
+        if (!director) {
             return res.status(400).send('No such director');
         } else {
-            return res.status(200).json(movie.Director);
+            return res.status(200).json(director);
         }
     }).catch(error => {
         console.error(error);
         return res.status(500).send('Error: ' + error);
     })
+
+    // Movies.findOne({"Director.Name": directorName}).then(movie => {
+    //     if (!movie) {
+    //         return res.status(400).send('No such director');
+    //     } else {
+    //         return res.status(200).json(movie.Director);
+    //     }
+    // }).catch(error => {
+    //     console.error(error);
+    //     return res.status(500).send('Error: ' + error);
+    // })
 
 });
 
