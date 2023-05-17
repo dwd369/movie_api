@@ -18,7 +18,10 @@ const Users = Models.User;
 let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
 
 // connect to mongodb database
-mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true});
+// mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true});
+// mongoose.connect('mongodb+srv://myFlixDBadmin:Oranges12073078@myflixdb.xuevxuy.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true});
+
 
 // use modules
 app.use(bodyParser.json());
@@ -35,8 +38,6 @@ app.use(cors({
         return callback(null, true);
     }
 }));
-
-
 
 
 // import auth.js
