@@ -25,6 +25,12 @@ let userSchema = mongoose.Schema({
     FavoriteMovies: [{type: mongoose.Schema.Types.ObjectId, ref: 'Movies'}]
 });
 
+let directorSchema = mongoose.Schema({
+    Name: {type: String, required: true},
+    Bio: {type: String, required: true},
+    Birthday: {type: Date, required: true},
+    Deathyear: Date
+});
 
 // add bcrypt functions to userSchema
 userSchema.statics.hashPassword = (password) => {
@@ -35,8 +41,11 @@ userSchema.methods.validatePassword = function(password) {
     return bcrypt.compareSync(password, this.Password);
 }
 
+
 let Movie = mongoose.model('Movie', movieSchema);
 let User = mongoose.model('Users', userSchema);
+let Director = mongoose.model('Directors', directorSchema);
 
 module.exports.Movie = Movie;
 module.exports.User = User;
+module.exports.Director = Director;
