@@ -18,7 +18,7 @@ const Users = Models.User;
 let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
 
 // connect to mongodb database
-mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true});
+// mongoose.connect('mongodb://localhost:27017/myFlix', { useNewUrlParser: true, useUnifiedTopology: true});
 
 // use modules
 app.use(bodyParser.json());
