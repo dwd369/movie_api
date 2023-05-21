@@ -226,8 +226,6 @@ app.get('/', (req, res) => {
     return res.status(200).send('Welcome to the myFlix API');
 })
 
-
-
 // GET request to pull the list of movies
 app.get('/movies', (req, res) => {
     
