@@ -281,7 +281,7 @@ app.get('/movies/genre/:genreName', passport.authenticate('jwt', { session: fals
 
 
 // GET request to pull data on a specific director
-app.get('/movies/directors/:name', { session: false}), (req, res) => {
+app.get('/movies/directors/:name',  (req, res) => {
     
     const { name } = req.params;
     console.log(name);
