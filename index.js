@@ -226,8 +226,10 @@ app.get('/', (req, res) => {
     return res.status(200).send('Welcome to the myFlix API');
 })
 
+
+
 // GET request to pull the list of movies
-app.get('/movies', (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false}), (req, res) => {
     
     Movies.find().then(movies => {
         console.log(movies);
@@ -281,7 +283,7 @@ app.get('/movies/genre/:genreName', passport.authenticate('jwt', { session: fals
 
 
 // GET request to pull data on a specific director
-app.get('/movies/directors/:name',  (req, res) => {
+app.get('/movies/directors/:name', passport.authenticate('jwt', { session: false}), (req, res) => {
     
     const { name } = req.params;
     console.log(name);
