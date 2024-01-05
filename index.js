@@ -133,11 +133,11 @@ app.put('/users/:Username',
     (req, res) => {
 
     // check for errors
-    let errors = validationResult(req);
+    // let errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-        return res.status(422).json({errors: errors.array()});
-    }
+    // if (!errors.isEmpty()) {
+    //     return res.status(422).json({errors: errors.array()});
+    // }
 
     let user = req.body;
     let hashedPassword = Users.hashPassword(req.body.Password);
