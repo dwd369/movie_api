@@ -54,8 +54,18 @@ const passport = require('passport');
 
 require('./passport.js');
 
-// CREATE REQUESTS //
-// POST request to add new registered user
+/**
+ * POST request to handle user registration
+ *
+ * @function
+ * @description this function handles user registration via POST request. It takes the user object from the body and validates it prior to processing it into the database.
+ * @memberof app
+ * @param {req.body} user - The data for the new user.
+ * @param {token} jwt token - JWT token from the user
+ * @returns {res} The response fro mthe HTTP post request
+ * @throws {Error} If there is an issue with user creation.
+ *
+ */
 app.post('/users', 
     // validation logic
     [
@@ -102,7 +112,7 @@ app.post('/users',
         });
 });
 
-// POST request to add a movie to a user's favorite movie
+
 app.post('/users/:id/:movieTitle', passport.authenticate('jwt', { session: false}), (req, res) => {
 
     const { id, movieTitle } = req.params;
@@ -118,9 +128,17 @@ app.post('/users/:id/:movieTitle', passport.authenticate('jwt', { session: false
 
 });
 
-
-// PUT request to update user information by username
-
+/**
+ * PUT request to update user information by username
+ *
+ * @function
+ * @description this function handles updating the user information. It takes the userdata from the request body and updates the user object via MongoDB. It validstes the errors first prior to updating the user object.
+ * @param {req} - The updated userdata is stored within the request body
+ * @param {token} - JWT token from the user
+ * @returns {res} The response fro mthe HTTP post request
+ * @throws {Error} If there is an issue with user creation.
+ *
+ */
 app.put('/users/:Username', 
     [
         check('Username','username is required').isLength({min: 5}), // validate username is not empty and has a minimum of 5 characters
@@ -164,8 +182,18 @@ app.put('/users/:Username',
     })
 });
 
-
-// PUT request to add favorite movies to a user based on username
+/**
+ * PUT request to add a movie to a user's favorite movie
+ *
+ * @function
+ * @description this function handles adding a favorite movie to the user object in MongoDB via POST request. It takes the userName and MovieId from the URL and add the movieId to the userID
+ * @param {Username} - The username of the user
+ * @param {MovieID} - The corresponding ID of the movie
+ * @param {token} - JWT token from the user
+ * @returns {res} The response fro mthe HTTP post request
+ * @throws {Error} If there is an issue with user creation.
+ *
+ */
 app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false}), (req, res) => {
     Users.findOneAndUpdate({ Username: req.params.Username }, {
        $push: { FavoriteMovies: req.params.MovieID }
@@ -179,8 +207,18 @@ app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { sess
   });
 
 
-// DELETE REQUESTS //
-// DELETE request to remove a movie from a user's favorite movies
+/**
+ * DELETE request to remove a movie from a user's favorite movies
+ *
+ * @function
+ * @description this function removes a movie from the user's favoritemovies. It takes the Username and MovieID from the URL and remove the MovieID from the corresponding user
+ * @param {Username} - The username of the user
+ * @param {MovieID} - The corresponding ID of the movie
+ * @param {token} - JWT token from the user
+ * @returns {res} The response fro mthe HTTP post request
+ * @throws {Error} If there is an issue with user creation.
+ *
+ */
 app.delete('/users/:Username/:movieID', passport.authenticate('jwt', { session: false}), (req, res) => {
     
     Users.find(
@@ -204,8 +242,17 @@ app.delete('/users/:Username/:movieID', passport.authenticate('jwt', { session: 
 
 });
 
-
-// DELETE request to remove a user by username
+/**
+ * DELETE request to remove a user by username
+ *
+ * @function
+ * @description this function removes the user using the Username from the user object in MongoDB.
+ * @param {Username} - The username of the user
+ * @param {token} - JWT token from the user
+ * @returns {res} The response fro mthe HTTP post request
+ * @throws {Error} If there is an issue with user creation.
+ *
+ */
 app.delete('/users/:Username', passport.authenticate('jwt', { session: false}), (req, res) => {
     const username = req.params.Username;
 
@@ -224,15 +271,22 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false}), 
 });
 
 
-// READ REQUESTS //
 // GET request for landing page
 app.get('/', (req, res) => {
     return res.status(200).send('Welcome to the myFlix API');
 })
 
 
-
-// GET request to pull the list of movies
+/**
+ * GET request to pull the list of movies
+ *
+ * @function
+ * @description this function fetches the list of movies that are available in the database via GET request
+ * @param {token} jwt token - JWT token from the user
+ * @returns {res} The response fro mthe HTTP post request
+ * @throws {Error} If there is an issue with user creation.
+ *
+ */
 app.get('/movies', passport.authenticate('jwt', { session: false}), (req, res) => {
     
     Movies.find().then(movies => {
@@ -245,12 +299,29 @@ app.get('/movies', passport.authenticate('jwt', { session: false}), (req, res) =
 
 });
 
-// GET request to pull API documentation
+/**
+ * GET request to genereate the API documentation
+ *
+ * @function
+ * @description this function genereates the API documents 
+ * @returns {res} API documentation is sent via the res body
+ *
+ */
 app.get('/documentation', passport.authenticate('jwt', { session: false}), (req, res) => {
     res.sendFile('public/documentation.html', { root: __dirname });
 });
 
-// GET request to pull a specific movie based on the provided title
+/**
+ * GET request to pull a specific movie based on the provided title
+ *
+ * @function
+ * @description this function fetches the details of a movie using the movie title
+ * @param {title} - title of the movie with. The value will be parsed
+ * @param {token} jwt token - JWT token from the user
+ * @returns {res} The response fro mthe HTTP post request
+ * @throws {Error} If there is an issue with user creation.
+ *
+ */
 app.get('/movies/:title', passport.authenticate('jwt', { session: false}), (req, res) => {
     const { title } = req.params;
 
@@ -267,7 +338,17 @@ app.get('/movies/:title', passport.authenticate('jwt', { session: false}), (req,
 
 });
 
-// GET request to pull data on a specific genre
+/**
+ * GET request to pull data on a specific genre
+ *
+ * @function
+ * @description this function fetches the movies that are in a specific genre. The genre is provided in the URL
+ * @param {genreName} - User specified genre
+ * @param {token} jwt token - JWT token from the user
+ * @returns {res} The response fro mthe HTTP post request
+ * @throws {Error} If there is an issue with user creation.
+ *
+ */
 app.get('/movies/genre/:genreName', passport.authenticate('jwt', { session: false}), (req, res) => {
     
     const { genreName } = req.params;
@@ -286,7 +367,17 @@ app.get('/movies/genre/:genreName', passport.authenticate('jwt', { session: fals
 });
 
 
-// GET request to pull data on a specific director
+/**
+ * GET request to pull data on a specific director
+ *
+ * @function
+ * @description this function fetches details of a director including name and bio. It takes the name of the director from the URL to look up against the director object
+ * @param {name} - Name of the director
+ * @param {token} jwt token - JWT token from the user
+ * @returns {res} The response fro mthe HTTP post request
+ * @throws {Error} If there is an issue with user creation.
+ *
+ */
 app.get('/movies/directors/:name', passport.authenticate('jwt', { session: false}), (req, res) => {
     
     const { name } = req.params;
